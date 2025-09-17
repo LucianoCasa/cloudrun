@@ -135,14 +135,12 @@ func weatherHandler(cepSvc *CepService, weatherSvc *WeatherService) http.Handler
 
 		city, err := cepSvc.Lookup(r.Context(), cep)
 		if err != nil {
-			if errors.Is(err, ErrCepNotFound) {
-				w.WriteHeader(http.StatusNotFound)
-				w.Write([]byte(ErrMsgCepNotFound))
-				return
-			}
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(ErrMsgCepNotFound))
 			return
 		}
+
+		// fmt.Printf("CEP Lookup | cep=%s city=%s\n", cep, city)
 
 		tempC, err := weatherSvc.GetTempC(r.Context(), city)
 		if err != nil {
